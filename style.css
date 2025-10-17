@@ -157,14 +157,23 @@ header h1 {
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 2em;
     font-weight: 600;
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden; /* ensure long numbers don't overflow the circle */
 }
 
+/* responsive, fluid text that scales to fit the circle */
 #score-circle-text {
-    font-size: 3em;
+    font-size: clamp(1.2rem, 6vw, 3rem); /* scales between min and max */
     line-height: 1;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+    display: block;
 }
 
 #score-container h2 {
@@ -186,6 +195,46 @@ header h1 {
     color: #4299e1;
     font-weight: 600;
 }
+
+/* start screen */
+.start-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 40px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    max-width: 600px;
+    margin: 60px auto;
+    text-align: center;
+}
+
+.start-screen h2 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.6rem;
+}
+
+.start-btn {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.start-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(56,161,105,0.2); }
+.start-btn:focus { outline: 3px solid rgba(66,153,225,0.18); outline-offset: 3px; }
+
+/* utility to hide elements until needed */
+.hidden { display: none !important; }
 
 /* Responsive for mobile */
 @media (max-width: 600px) {

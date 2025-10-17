@@ -21,7 +21,7 @@ const quizData = [
     },
     {
         question: "How do you select an element by ID in the DOM?",
-        options: ["querySelector", "getElementById", "createElement", "appendChild"],
+        options: ["query Selector", "get Element ById", "create Element", "append Child"],
         correct: 1
     },
     {
@@ -157,7 +157,6 @@ function showScore() {
     else if (percentage >= 60) feedback = "Well done! Keep practicing those concepts. 👍";
     else feedback = "Good start—dive back into the lecture notes for a refresh. 📚";
     if (percentage === 100) {
-        // Confetti effect example
         console.log("🎉 Perfect score! Launching confetti...");
         // Use a library or CSS animation if you want visuals.
     }
@@ -169,7 +168,13 @@ function showScore() {
         localStorage.setItem('jsQuizHighScore', highScore);
         document.getElementById('high-score').style.display = 'block';
         document.getElementById('high-score-val').textContent = highScore;
+    }
 
+    // Play perfect sound if perfect score (ensure audio unlocked on Start)
+    try {
+        checkAndPlayPerfect(score, totalQuestions);
+    } catch (err) {
+        console.warn('Error attempting to play perfect sound', err);
     }
 }
 function restartQuiz() {
@@ -191,3 +196,57 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', loadQuestion);
+
+const startScreen = document.getElementById('start-screen');
+const quizContainer = document.getElementById('quiz-container');
+const perfectSound = document.getElementById('perfect-sound');
+const startBtn = document.getElementById('start-btn');
+
+// Unlock audio on first user interaction (Start button)
+if (startBtn && perfectSound) {
+    startBtn.addEventListener('click', () => {
+        perfectSound.play()
+            .then(() => {
+                perfectSound.pause();
+                perfectSound.currentTime = 0;
+            })
+            .catch(() => {/* ignore if blocked */});
+    });
+}
+
+// Call this when quiz ends
+function checkAndPlayPerfect(scoreVal, maxScore) {
+    if (!perfectSound) return;
+    if (scoreVal === maxScore) {
+        perfectSound.currentTime = 0;
+        perfectSound.volume = 0.9;
+        perfectSound.play().then(() => {
+            console.log('Perfect sound played');
+        }).catch((err) => {
+            console.warn('Playback blocked or failed:', err);
+        });
+    }
+}
+
+if (startBtn) {
+  startBtn.addEventListener('click', () => {
+    // hide start, show quiz
+    startScreen?.classList.add('hidden');
+    quizContainer?.classList.remove('hidden');
+
+    // unlock audio (workaround for autoplay restrictions)
+    if (perfectSound) {
+      perfectSound.play().then(() => {
+        perfectSound.pause();
+        perfectSound.currentTime = 0;
+      }).catch(() => {/* ignored */});
+    }
+
+    // focus first interactive element and optionally start timer/quiz logic
+    const firstInteractive = document.querySelector('.option, #next-btn, input, button');
+    if (firstInteractive) firstInteractive.focus();
+
+    // call existing initializer if present
+    if (typeof startQuiz === 'function') startQuiz();
+  });
+}
